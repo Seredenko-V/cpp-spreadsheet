@@ -18,19 +18,24 @@ public:
 
     Value GetValue() const override;
     std::string GetText() const override;
+
+    // получение позиций ячеек-родителей (от которых зависим)
     std::vector<Position> GetReferencedCells() const override;
 
-    bool IsReferenced() const;
-
 private:
+    // возможные типы ячейки
     class Impl;
     class EmptyImpl;
     class TextImpl;
     class FormulaImpl;
-
     std::unique_ptr<Impl> impl_;
+    Sheet& sheet_; // лист, которому принадлежит ячейка
+    std::unordered_set<Cell*> descendants_; // зависимые ячейки от текущей
 
-    // Добавьте поля и методы для связи с таблицей, проверки циклических 
-    // зависимостей, графа зависимостей и т. д.
+private:
+    // проверка на наличие циклическоей зависимости
+    bool IsCircularDependency(const Impl& impl) const;
 
+    // очистка кэша текущей и зависимых ячеек
+    void CacheInvalidate();
 };
