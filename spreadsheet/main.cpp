@@ -345,6 +345,139 @@ void TestCellCircularReferences() {
     ASSERT(caught);
     ASSERT_EQUAL(sheet->GetCell("M6"_pos)->GetText(), "Ready");
 }
+
+//void PrintSheet(const std::unique_ptr<SheetInterface>& sheet, std::ostream& out) {
+//    out << sheet->GetPrintableSize() << std::endl;
+//    out << "PrintTexts:\n";
+//    sheet->PrintTexts(out);
+//    out << std::endl;
+//    out << "PrintValues:\n";
+//    sheet->PrintValues(out);
+//    out << std::endl;
+//}
+
+void TestClearPrint() {
+    using namespace std;
+    auto sheet = CreateSheet();
+    for (int i = 0; i <= 5; ++i) {
+        sheet->SetCell(Position{i, i}, std::to_string(i));
+    }
+    { // после заполнения таблицы
+        ostringstream printable_size_sheet;
+        printable_size_sheet << sheet->GetPrintableSize();
+        ASSERT_EQUAL(printable_size_sheet.str(), "(6, 6)"s);
+
+        ostringstream text_out;
+        sheet->PrintTexts(text_out);
+        ostringstream text_expected {
+            "0\t\t\t\t\t\n"s
+            "\t1\t\t\t\t\n"s
+            "\t\t2\t\t\t\n"s
+            "\t\t\t3\t\t\n"s
+            "\t\t\t\t4\t\n"s
+            "\t\t\t\t\t5\n"s
+        };
+        ASSERT_EQUAL(text_out.str(), text_expected.str());
+        ostringstream values_out;
+        sheet->PrintValues(values_out);
+        // т.к. все ячейки численные
+        ASSERT_EQUAL(values_out.str(), text_expected.str());
+    }
+
+    vector<string> expected_table_states{
+        "",
+        "0\n"s,
+        "0\t\n\t1\n"s,
+        "0\t\t\n\t1\t\n\t\t2\n"s,
+        "0\t\t\t\n\t1\t\t\n\t\t2\t\n\t\t\t3\n"s,
+        "0\t\t\t\t\n\t1\t\t\t\n\t\t2\t\t\n\t\t\t3\t\n\t\t\t\t4\n"s
+    };
+    for (int i = 5; i >= 0; --i) {
+        sheet->ClearCell(Position{i, i});
+
+        ostringstream printable_size_sheet;
+        printable_size_sheet << sheet->GetPrintableSize();
+        ostringstream printable_size_expected;
+        printable_size_expected << '(' << i << ", "s << i << ')';
+        ASSERT_EQUAL(printable_size_sheet.str(), printable_size_expected.str());
+        ostringstream values_out;
+        sheet->PrintValues(values_out);
+        ASSERT_EQUAL(values_out.str(), expected_table_states[i]);
+    }
+}
+
+void TestExample() {
+    using namespace std;
+    auto sheet = CreateSheet();
+    sheet->SetCell("A1"_pos, "=(1+2)*3");
+    sheet->SetCell("B1"_pos, "=1+(2*3)");
+
+    sheet->SetCell("A2"_pos, "some");
+    sheet->SetCell("B2"_pos, "text");
+    sheet->SetCell("C2"_pos, "here");
+
+    sheet->SetCell("C3"_pos, "'and'");
+    sheet->SetCell("D3"_pos, "'here");
+
+    sheet->SetCell("B5"_pos, "=1/0");
+
+    ostringstream printable_size_sheet;
+    printable_size_sheet << sheet->GetPrintableSize();
+    ASSERT_EQUAL(printable_size_sheet.str(), "(5, 4)"s);
+
+    ostringstream text_out;
+    sheet->PrintTexts(text_out);
+    ostringstream text_out_expected {
+        "=(1+2)*3\t=1+2*3\t\t\n"s
+        "some\ttext\there\t\n"s
+        "\t\t'and'\t'here\n"
+        "\t\t\t\n"s
+        "\t=1/0\t\t\n"s
+    };
+    ASSERT_EQUAL(text_out.str(), text_out_expected.str());
+
+    ostringstream values_out;
+    sheet->PrintValues(values_out);
+    ostringstream values_expected {
+        "9\t7\t\t\n"s
+        "some\ttext\there\t\n"s
+        "\t\tand'\there\n"
+        "\t\t\t\n"s
+        "\t#DIV/0!\t\t\n"s
+    };
+    ASSERT_EQUAL(values_out.str(), values_expected.str());
+}
+
+void TestSetGetCellFormulaZeroDivision() {
+    auto sheet = CreateSheet();
+    auto checkCell = [&sheet](Position pos, std::string text) {
+        sheet->SetCell(pos, text);
+        {
+            CellInterface* cell = sheet->GetCell(pos);
+            ASSERT(cell != nullptr);
+        }{
+            const auto& sheet_c = sheet;
+            CellInterface* cell = sheet_c->GetCell(pos);
+            ASSERT(cell != nullptr);
+        }
+    };
+
+    checkCell("A1"_pos, "=1/0");
+    checkCell("A1"_pos, "=0/0");
+
+    checkCell("B1"_pos, "=1/(1-1)");
+    checkCell("B1"_pos, "=0/(1-1)");
+    checkCell("B1"_pos, "=(1-1)/(1-1)");
+
+    checkCell("C1"_pos, "=1+1/(1-1)");
+    checkCell("C1"_pos, "=1+0/(1-1)");
+    checkCell("C1"_pos, "=1+(1-1)/(1-1)");
+
+    checkCell("D1"_pos, "=1/(1-1)+1");
+    checkCell("D1"_pos, "=0/(1-1)+1");
+    checkCell("D1"_pos, "=(1-1)/(1-1)+1");
+}
+
 }  // namespace
 
 int main() {
@@ -368,5 +501,8 @@ int main() {
     RUN_TEST(tr, TestCellReferences);
     RUN_TEST(tr, TestFormulaIncorrect);
     RUN_TEST(tr, TestCellCircularReferences);
+    RUN_TEST(tr, TestClearPrint);
+    RUN_TEST(tr, TestExample);
+    RUN_TEST(tr, TestSetGetCellFormulaZeroDivision);
     return 0;
 }
