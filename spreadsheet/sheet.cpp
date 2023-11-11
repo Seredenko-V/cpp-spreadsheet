@@ -1,5 +1,4 @@
 #include "sheet.h"
-
 #include "cell.h"
 #include "common.h"
 
