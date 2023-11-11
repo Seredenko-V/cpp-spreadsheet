@@ -42,6 +42,7 @@ add_executable(
   spreadsheet
   ${ANTLR_FormulaParser_CXX_OUTPUTS}
   ${sources}
+  tests.cpp
 )
 
 target_link_libraries(spreadsheet antlr4_static)

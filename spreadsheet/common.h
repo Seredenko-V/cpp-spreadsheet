@@ -148,3 +148,10 @@ public:
 
 // Создаёт готовую к работе пустую таблицу.
 std::unique_ptr<SheetInterface> CreateSheet();
+
+
+namespace tests {
+    void TestPositionAndStringConversion();
+    void TestPositionToStringInvalid();
+    void TestStringToPositionInvalid();
+} // namespace tests
