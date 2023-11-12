@@ -39,16 +39,16 @@
 Для отображения таблицы необходимо знать размер её минимальной печатной области. Это минимальная прямоугольная область с 
 вершиной в ячейке `A1`, содержащая все непустые ячейки. Она нужна чтобы не печатать всю таблицу, если её большая часть состоит
 из пустых ячеек.
-![Минимальная печатная область](ССЫЛКА "Минимальная печатная область")    
+![Минимальная печатная область](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/main/images/print-area.png?token=GHSAT0AAAAAAB7SDXXWS433JRMQU4426BYWZKQUBLQ "Минимальная печатная область")    
 
 ### Методы, применяемые ко всей таблице
 1. `Size GetPrintableSize() const` - определяет размер минимальной печатной области. Ячейки из одной строки разделены 
 табуляцией `\t`, в конце строки присутствует символ перевода строки `\n`.
 2. `void PrintTexts(std::ostream&) const` - выводит текстовые представления ячеек. Это текст, который пользователь 
 задал в методе `Set(std::string)`.
-![PrintTexts](ССЫЛКА "PrintTexts")
+![PrintTexts](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/main/images/PrintTexts.png?token=GHSAT0AAAAAAB7SDXXX23DZPZ3UXA2HIQSKZKQUBXQ "PrintTexts")
 3. `void PrintValues(std::ostream&) const` - выводит значения ячеек — строки, числа или `FormulaError`.
-![PrintValues](ССЫЛКА "PrintValues")
+![PrintValues](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/main/images/PrintValues.png?token=GHSAT0AAAAAAB7SDXXXPXBGEZLPI5XDQ7PEZKQUCDA "PrintValues")
 
 ### Методы, применяемые к ячейке по индексу
 1. `SetCell(Position, std::string)` - задаёт содержимое ячейки по индексу `Position`. Если ячейки не существует, то будет 
@@ -58,7 +58,7 @@
 расположенную по индексу `pos`. Если ячейка пуста, возвращают `nullptr`. Последующий вызов `GetCell()` для этой ячейки 
 вернёт `nullptr`. При этом может измениться размер минимальной печатной области. Если в примере выше удалить ячейку `В5`, 
 минимальная печатная область поменяется и будет выглядеть так:
-![Минимальная печатная область](ССЫЛКА "Минимальная печатная область")   
+![Минимальная печатная область](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/main/images/print-area2.png?token=GHSAT0AAAAAAB7SDXXWPWSTXUPIOH2KJKJKZKQUCLQ "Минимальная печатная область")   
 
 ## Системные требования
 * CMake 3.8
@@ -92,3 +92,11 @@ spreadsheet/
  
 ## Тесты и примеры использования
 Примеры использования таблицы являются тестами и находятся в `tests.cpp`. Отдельный пример вынесен в `main.cpp`.
+
+## UML-диаграммы
+### Модуль `domain`
+![domain-UML](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/7ca0a3f16eff909cb652069fa4b94329d7d2fd95/images/domain-modul-UML.svg?token=AWESMY2LHGGRK6AAWE6SRGDFKCQPO "domain-UML")
+### Модуль `formula`
+![formula-UML](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/7ca0a3f16eff909cb652069fa4b94329d7d2fd95/images/formula-modul-UML.svg?token=AWESMY5PA7RX2XLIRS6LCFDFKCQSM "formula-UML")
+### Решение полностью
+![solution-UML](https://raw.githubusercontent.com/Seredenko-V/cpp-spreadsheet/7ca0a3f16eff909cb652069fa4b94329d7d2fd95/images/solution-UML.svg?token=AWESMY66AYBU7DSRHIC2IRDFKCQVQ "solution-UML") 
