@@ -1,5 +1,6 @@
 #include "cell.h"
 #include "sheet.h"
+#include "formula.h"
 
 #include <cassert>
 #include <iostream>

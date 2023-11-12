@@ -39,7 +39,7 @@ public:
     enum class Category {
         Ref,    // ссылка на ячейку с некорректной позицией
         Value,  // ячейка не может быть трактована как число
-        Div0,  // в результате вычисления возникло деление на ноль
+        Div0  // в результате вычисления возникло деление на ноль
     };
 
     FormulaError(Category category);
@@ -148,3 +148,10 @@ public:
 
 // Создаёт готовую к работе пустую таблицу.
 std::unique_ptr<SheetInterface> CreateSheet();
+
+
+namespace tests {
+    void TestPositionAndStringConversion();
+    void TestPositionToStringInvalid();
+    void TestStringToPositionInvalid();
+} // namespace tests

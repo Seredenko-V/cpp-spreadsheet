@@ -36,3 +36,22 @@ private:
 private:
     std::unordered_map<Position, std::unique_ptr<Cell>, PositionHasher> sheet_;
 };
+
+namespace tests {
+    void TestEmpty();
+    void TestInvalidPosition();
+    void TestSetCellPlainText();
+    void TestClearCell();
+    void TestFormulaArithmetic();
+    void TestFormulaReferences();
+    void TestErrorValue();
+    void TestErrorDiv0();
+    void TestEmptyCellTreatedAsZero();
+    void TestFormulaInvalidPosition();
+    void TestPrint();
+    void TestCellReferences();
+    void TestCellCircularReferences();
+    void TestClearPrint();
+    void TestExample();
+    void TestSetGetCellFormulaZeroDivision();
+} // namespace tests
